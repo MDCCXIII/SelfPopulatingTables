@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace SelfPopulatingTableFromAnnotation.Sql_Adapter {
@@ -11,6 +12,7 @@ namespace SelfPopulatingTableFromAnnotation.Sql_Adapter {
         public static string ColumnName_RequiredParameters = null;
         public static string ColumnName_OptionalParameters = null;
         public static string ColumnName_ActionDescription = null;
+        public static MethodInfo mi;
 
         public ActionMap() {
             CheckAppConfig();
@@ -25,15 +27,15 @@ namespace SelfPopulatingTableFromAnnotation.Sql_Adapter {
             ColumnMap.Add(ColumnName_RequiredParameters, "");
             ColumnMap.Add(ColumnName_OptionalParameters, "");
             ColumnMap.Add(ColumnName_ActionDescription, actionDescription);
-            foreach(ParameterInfo pi in typeof(ActionMap).GetMethod(memberName).GetParameters()) {
+            foreach (ParameterInfo pi in mi.GetParameters()) {
                 if (pi.IsOptional) {
                     ColumnMap[ColumnName_OptionalParameters] += pi.Name + ",";
                 } else {
                     ColumnMap[ColumnName_RequiredParameters] += pi.Name + ",";
                 }
             }
-            ColumnMap[ColumnName_RequiredParameters].TrimEnd(',');
-            ColumnMap[ColumnName_OptionalParameters].TrimEnd(',');
+            ColumnMap[ColumnName_RequiredParameters] = ColumnMap[ColumnName_RequiredParameters].TrimEnd(',');
+            ColumnMap[ColumnName_OptionalParameters] = ColumnMap[ColumnName_OptionalParameters].TrimEnd(',');
         }
 
         public virtual Dictionary<string,string> TableRecord {
@@ -63,20 +65,35 @@ namespace SelfPopulatingTableFromAnnotation.Sql_Adapter {
       public static void LoadActionsIntoDB<T>(this T clazz) where T : ActionMap {
             //T c = (T)Activator.CreateInstance(typeof(T), new object[] { }); ;
             foreach (MethodInfo mi in clazz.GetType().GetMethods()) {
-                var methodInfo = typeof(T).GetMethod(mi.Name);
-                Command check = new Command(ConfigurationManager.AppSettings.Get("CheckForActionProceedureName"));
-                check.AddParameter(ActionMap.ColumnName_ActionName, GetTableRecord(methodInfo)[ActionMap.ColumnName_ActionName]);
-                if (DAO.RowInTable(check)) {
-                    Command command = new Command(ConfigurationManager.AppSettings.Get("InstertActionsIntoActionsProceedureName"));
-                    command.AddParameters(GetTableRecord(methodInfo));
-                    DAO.ExecuteStoredNonQuery(command);
+                MethodInfo methodInfo = typeof(T).GetMethod(mi.Name);
+                ActionMap.mi = methodInfo;
+                if (GetTableRecord(methodInfo) != null)
+                {
+                    
+                    Command check = new Command(ConfigurationManager.AppSettings.Get("CheckForActionProceedureName"));
+                    check.AddParameter(ActionMap.ColumnName_ActionName, GetTableRecord(methodInfo)[ActionMap.ColumnName_ActionName]);
+                    if (!DAO.RowInTable(check))
+                    {
+                        Command command = new Command(ConfigurationManager.AppSettings.Get("InstertActionsIntoActionsProceedureName"));
+                        command.AddParameters(GetTableRecord(methodInfo));
+                        DAO.ExecuteStoredNonQuery(command);
+                        command.Dispose();
+                    }
+                    check.Dispose();
                 }
-
             }
         }
 
         private static Dictionary<string, string> GetTableRecord(MethodInfo methodInfo) {
-            return ((ActionMap)Attribute.GetCustomAttribute(methodInfo, typeof(ActionMap))).TableRecord;
+            try
+            {
+                return ((ActionMap)Attribute.GetCustomAttribute(methodInfo, typeof(ActionMap))).TableRecord;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                return null;
+            }
         }
         
     }
