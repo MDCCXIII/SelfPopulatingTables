@@ -1,0 +1,7 @@
+﻿control1
+control2
+mycustomcontrol
+IsCaseSensitive
+addedcontrol1
+addedControl2
+Kaitlyne
