@@ -37,5 +37,11 @@ namespace SelfPopulatingTableFromAnnotation
         {
             Console.WriteLine(text);
         }
+
+        [ActionMap("Preforms an update on a table.")]
+        public static void Update()
+        {
+            Console.WriteLine("I'm Updating.");
+        }
     }
 }

@@ -17,6 +17,7 @@ namespace SelfPopulatingTableFromAnnotation {
             new ActionExamples().LoadActionsIntoDB();
             ActionExamples.Execute("Click");
             ActionExamples.Execute("SendText", new string[] { "I am writing all the text for this output." });
+            ActionExamples.Execute("Update");
             Console.ReadLine();
         }
     }
