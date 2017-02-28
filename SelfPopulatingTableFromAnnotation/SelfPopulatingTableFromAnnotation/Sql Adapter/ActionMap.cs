@@ -15,14 +15,14 @@ namespace SelfPopulatingTableFromAnnotation.Sql_Adapter {
         public static MethodInfo mi;
 
         public ActionMap() {
-            CheckAppConfig();
-            ColumnName_ActionName = ConfigurationManager.AppSettings.Get("ActionTableProceedure_ActionName_ParameterName");
-            ColumnName_RequiredParameters = ConfigurationManager.AppSettings.Get("ActionTableProceedure_RequiredParameters_ParameterName");
-            ColumnName_OptionalParameters = ConfigurationManager.AppSettings.Get("ActionTableProceedure_OptionalParameters_ParameterName");
-            ColumnName_ActionDescription = ConfigurationManager.AppSettings.Get("ActionTableProceedure_ActionDescription_ParameterName");
+            ColumnName_ActionName = ConfigurationManager.AppSettings.Get("actionName");
+            ColumnName_RequiredParameters = ConfigurationManager.AppSettings.Get("requiredParameters");
+            ColumnName_OptionalParameters = ConfigurationManager.AppSettings.Get("optionalParameters");
+            ColumnName_ActionDescription = ConfigurationManager.AppSettings.Get("actionDescription");
         }
 
         public ActionMap(string actionDescription, [System.Runtime.CompilerServices.CallerMemberName] string memberName = "") {
+            ColumnMap = new Dictionary<string, string>();
             ColumnMap.Add(ColumnName_ActionName, memberName);
             ColumnMap.Add(ColumnName_RequiredParameters, "");
             ColumnMap.Add(ColumnName_OptionalParameters, "");
@@ -41,45 +41,70 @@ namespace SelfPopulatingTableFromAnnotation.Sql_Adapter {
         public virtual Dictionary<string,string> TableRecord {
             get { return ColumnMap; }
         }
-        public static void CheckAppConfig() {
-            List<string> Keys = new List<string>();
-            Keys.Add("InstertActionsIntoActionsProceedureName");
-            Keys.Add("CheckForActionProceedureName");
-            Keys.Add("ActionTableProceedure_ActionName_ParameterName");
-            Keys.Add("ActionTableProceedure_RequiredParameters_ParameterName");
-            Keys.Add("ActionTableProceedure_OptionalParameters_ParameterName");
-            Keys.Add("ActionTableProceedure_ActionDescription_ParameterName");
-            
-            foreach(string key in Keys) {
-                if(ConfigurationManager.AppSettings[key] == null) {
-                    throw new Exception("The App.Config does not contains the key \"" + key + "\" in the <appSettings>.");
-                }
-                if(ConfigurationManager.AppSettings[key] == "") {
-                    throw new Exception("The App.Config <appSettings> for \"" + key + "\" has a value of \"\".");
-                }
-            }
-        }
+        
     }
 
     public static class ActionMapExtensions {
       public static void LoadActionsIntoDB<T>(this T clazz) where T : ActionMap {
             //T c = (T)Activator.CreateInstance(typeof(T), new object[] { }); ;
+            DeleteStaleActions(clazz);
             foreach (MethodInfo mi in clazz.GetType().GetMethods()) {
                 MethodInfo methodInfo = typeof(T).GetMethod(mi.Name);
                 ActionMap.mi = methodInfo;
                 if (GetTableRecord(methodInfo) != null)
                 {
-                    
-                    Command check = new Command(ConfigurationManager.AppSettings.Get("CheckForActionProceedureName"));
+                    Command check = new Command(ConfigurationManager.AppSettings.Get("getActionByActionName"));
+                    check.AddParameter("CSL", Instance.CSL);
                     check.AddParameter(ActionMap.ColumnName_ActionName, GetTableRecord(methodInfo)[ActionMap.ColumnName_ActionName]);
-                    if (!DAO.RowInTable(check))
+                    if (!DAO.QueryReturnsRows(check))
                     {
-                        Command command = new Command(ConfigurationManager.AppSettings.Get("InstertActionsIntoActionsProceedureName"));
+                        Command command = new Command(ConfigurationManager.AppSettings.Get("InstertAction"));
+                        command.AddParameter("id", Instance.Current);
                         command.AddParameters(GetTableRecord(methodInfo));
-                        DAO.ExecuteStoredNonQuery(command);
+                        DAO.ExecuteNonQuery(command);
+                        command.Dispose();
+                    }
+                    else
+                    {
+                        Command command = new Command(ConfigurationManager.AppSettings.Get("UpdateAction"));
+                        command.AddParameter("CSL", Instance.CSL);
+                        command.AddParameters(GetTableRecord(methodInfo));
+                        DAO.ExecuteNonQuery(command);
                         command.Dispose();
                     }
                     check.Dispose();
+                }
+            }
+        }
+
+        private static void DeleteStaleActions<T>(T clazz)
+        {
+            Command Actions = new Command(ConfigurationManager.AppSettings.Get("getActionInformation"));
+            Actions.AddParameter("CSL", Instance.CSL);
+            List<Dictionary<string,string>> ActionInfo = DAO.ExecuteQuery(Actions);
+            foreach(Dictionary<string, string> action in ActionInfo)
+            {
+                bool actionInClass = false;
+                foreach (MethodInfo mi in clazz.GetType().GetMethods())
+                {
+                    MethodInfo methodInfo = typeof(T).GetMethod(mi.Name);
+                    ActionMap.mi = methodInfo;
+                    if (GetTableRecord(methodInfo) != null)
+                    {
+                        if (action[ActionMap.ColumnName_ActionName].Equals(GetTableRecord(methodInfo)[ActionMap.ColumnName_ActionName]))
+                        {
+                            actionInClass = true;
+                            break;
+                        }
+                    }
+                }
+                if (!actionInClass)
+                {
+                    Command deleteAction = new Command(ConfigurationManager.AppSettings.Get("DeleteAction"));
+                    deleteAction.AddParameter("CSL", Instance.CSL);
+                    deleteAction.AddParameter(ActionMap.ColumnName_ActionName, action[ActionMap.ColumnName_ActionName]);
+                    DAO.ExecuteNonQuery(deleteAction);
+                    deleteAction.Dispose();
                 }
             }
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 
@@ -12,7 +13,7 @@ namespace SelfPopulatingTableFromAnnotation.Sql_Adapter {
         /// <param name="clazz"></param>
         /// <param name="command"></param>
         /// <returns></returns>
-        public static List<T> ExecuteStoredQuery<T>(this T clazz, Command command) where T : TableMap {
+        public static List<T> ExecuteQuery<T>(this T clazz, Command command) where T : TableMap {
             SqlCommand cmd = command.command;
             cmd = cmd.CheckConnectivity();
             List<T> result = new List<T>();
@@ -39,15 +40,44 @@ namespace SelfPopulatingTableFromAnnotation.Sql_Adapter {
                     }
                 }
             }
+            cmd.Dispose();
             return result;
         }
+
+        public static List<Dictionary<string,string>> ExecuteQuery(Command command)
+        {
+            SqlCommand cmd = command.command;
+            cmd = cmd.CheckConnectivity();
+            List<Dictionary<string,string>> result = new List<Dictionary<string, string>>();
+
+            using (cmd)
+            {
+                cmd.Connection.Open();
+                using (SqlDataReader rdr = cmd.ExecuteReader())
+                {
+                    int rownum = -1;
+                    while (rdr.Read())
+                    {
+                        rownum++;
+                        result.Add(new Dictionary<string, string>());
+                        for (int i = 0; i < rdr.FieldCount; i++)
+                        {
+                            result[rownum].Add(rdr.GetName(i), rdr.GetValue(i).ToString());
+                        }
+                    }
+                }
+            }
+            cmd.Dispose();
+            return result;
+        }
+
 
         /// <summary>
         /// Executes a stored proceedure and reports true if the procedure returned rows;
         /// </summary>
         /// <param name="command"></param>
         /// <returns>true if proceedure returns rows</returns>
-        public static bool RowInTable(Command command) {
+        public static bool QueryReturnsRows(Command command) {
             SqlCommand cmd = command.command;
             cmd = cmd.CheckConnectivity();
             bool result = false;
@@ -57,6 +87,20 @@ namespace SelfPopulatingTableFromAnnotation.Sql_Adapter {
                     result = rdr.HasRows;
                 }
             }
+            cmd.Dispose();
+            return result;
+        }
+        public static object ExecuteScalar(Command command)
+        {
+            object result = null;
+            SqlCommand cmd = command.command;
+            cmd = cmd.CheckConnectivity();
+            using (cmd)
+            {
+                cmd.Connection.Open();
+                result = cmd.ExecuteScalar();
+            }
+            cmd.Dispose();
             return result;
         }
 
@@ -65,7 +109,7 @@ namespace SelfPopulatingTableFromAnnotation.Sql_Adapter {
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        public static int ExecuteStoredNonQuery(Command command) {
+        public static int ExecuteNonQuery(Command command) {
             SqlCommand cmd = command.command;
             cmd = cmd.CheckConnectivity();
             int result = 0;
@@ -73,6 +117,7 @@ namespace SelfPopulatingTableFromAnnotation.Sql_Adapter {
                 cmd.Connection.Open();
                 result = cmd.ExecuteNonQuery();
             }
+            cmd.Dispose();
             return result;
         }
     }

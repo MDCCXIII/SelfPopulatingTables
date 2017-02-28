@@ -7,7 +7,7 @@
 <#@ output extension=".cs" #>
 namespace T4_cs_generation_from_Model {
 	public static class Controls {
-<# using (StreamReader sr = new StreamReader("C:\\Users\\MDCCXIII\\Documents\\Visual Studio 2015\\Projects\\ConsoleApplication2\\ConsoleApplication2\\TextFile1.txt")) {
+<# using (StreamReader sr = new StreamReader("C:\\Users\\ahayes\\Source\\Repos\\SelfPopulatingTables\\ConsoleApplication2\\ConsoleApplication2\\TextFile1.txt")) {
 while (!sr.EndOfStream) { 
 string line = sr.ReadLine(); #>
 		public const string <#= line #> = "<#= line #>";

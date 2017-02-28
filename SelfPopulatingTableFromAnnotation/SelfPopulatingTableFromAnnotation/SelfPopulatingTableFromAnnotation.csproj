@@ -44,10 +44,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Instance.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ActionExamples.cs" />
     <Compile Include="Sql Adapter\ActionMap.cs" />
+    <Compile Include="Sql Adapter\BonesBuilder\SQLDataBase.cs" />
     <Compile Include="Sql Adapter\ColumnMap.cs" />
     <Compile Include="Sql Adapter\Command.cs" />
     <Compile Include="Sql Adapter\DAO.cs" />
@@ -55,6 +57,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="InstanceIds.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

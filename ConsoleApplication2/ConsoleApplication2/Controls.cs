@@ -7,5 +7,6 @@
 		public const string addedcontrol1 = "addedcontrol1";
 		public const string addedControl2 = "addedControl2";
 		public const string Kaitlyne = "Kaitlyne";
+		public const string Tony = "Tony";
 	}
 }
