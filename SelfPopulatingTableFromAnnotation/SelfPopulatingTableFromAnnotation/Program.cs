@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace SelfPopulatingTableFromAnnotation {
     class Program {
-        public static string DefaultConnectionStringName = "TestDB";
+        public static string DefaultConnectionStringName = "SharedServer";
         
         static void Main(string[] args) {
             new Instance();
