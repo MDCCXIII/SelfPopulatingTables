@@ -1,12 +1,9 @@
 ﻿using SelfPopulatingTableFromAnnotation.Sql_Adapter;
 using SelfPopulatingTableFromAnnotation.Sql_Adapter.BonesBuilder;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
-using System.Reflection;
 
-namespace SelfPopulatingTableFromAnnotation {
+namespace SelfPopulatingTableFromAnnotation
+{
     class Program {
         public static string DefaultConnectionStringName = "SharedServer";
         
@@ -15,6 +12,8 @@ namespace SelfPopulatingTableFromAnnotation {
             Config.CheckAppSettings();
             SQLDataBase.Build();
             new ActionExamples().LoadActionsIntoDB();
+
+            //////TEST CODE BELOW///////
             ActionExamples.Execute("Click");
             ActionExamples.Execute("SendText", new string[] { "I am writing all the text for this output." });
             ActionExamples.Execute("Update");

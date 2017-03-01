@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 
-namespace SelfPopulatingTableFromAnnotation.Sql_Adapter {
+namespace SelfPopulatingTableFromAnnotation.Sql_Adapter
+{
     static class DAO {
 
         /// <summary>
