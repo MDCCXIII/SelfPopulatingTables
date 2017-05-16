@@ -25,9 +25,9 @@ namespace SqlDataAdapter.Configurations
             return (AppSettingsSection)GetSection("appSettings");
         }
 
-        public static AppSettingsSection AppSettings(string FilePath)
+        public static AppSettingsSection AppSettings(string FileName)
         {
-            SetConfigPath(FilePath);
+            SetConfigPath(FileName);
             return (AppSettingsSection)GetSection("appSettings");
         }
 
@@ -36,9 +36,9 @@ namespace SqlDataAdapter.Configurations
             return (ColumnMapSection)GetSection("DBMappings");
         }
 
-        public static ColumnMapSection ColumnMappings(string FilePath)
+        public static ColumnMapSection ColumnMappings(string FileName)
         {
-            SetConfigPath(FilePath);
+            SetConfigPath(FileName);
             return (ColumnMapSection)GetSection("DBMappings");
         }
 
@@ -48,16 +48,16 @@ namespace SqlDataAdapter.Configurations
             return configuration.ConnectionStrings.ConnectionStrings;
         }
 
-        public static ConnectionStringSettingsCollection ConnectionStrings(string FilePath)
+        public static ConnectionStringSettingsCollection ConnectionStrings(string FileName)
         {
-            SetConfigPath(FilePath);
+            SetConfigPath(FileName);
             Configuration configuration = AccessAdapterConfig(Path_SqlDataAdapterConfig);
             return configuration.ConnectionStrings.ConnectionStrings;
         }
 
-        public static void SetConfigPath(string FilePath)
+        public static void SetConfigPath(string FileName)
         {
-            Path_SqlDataAdapterConfig = FilePath;
+            Path_SqlDataAdapterConfig = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Locati‌​on) + @"\" + FileName;
         }
 
     }
