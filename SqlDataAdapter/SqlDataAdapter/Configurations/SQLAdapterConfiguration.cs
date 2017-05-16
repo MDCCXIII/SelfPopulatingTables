@@ -27,7 +27,7 @@ namespace SqlDataAdapter.Configurations
 
         public static AppSettingsSection AppSettings(string FileName)
         {
-            SetConfigPath(FileName);
+            SetConfig(FileName);
             return (AppSettingsSection)GetSection("appSettings");
         }
 
@@ -38,7 +38,7 @@ namespace SqlDataAdapter.Configurations
 
         public static ColumnMapSection ColumnMappings(string FileName)
         {
-            SetConfigPath(FileName);
+            SetConfig(FileName);
             return (ColumnMapSection)GetSection("DBMappings");
         }
 
@@ -50,12 +50,12 @@ namespace SqlDataAdapter.Configurations
 
         public static ConnectionStringSettingsCollection ConnectionStrings(string FileName)
         {
-            SetConfigPath(FileName);
+            SetConfig(FileName);
             Configuration configuration = AccessAdapterConfig(Path_SqlDataAdapterConfig);
             return configuration.ConnectionStrings.ConnectionStrings;
         }
 
-        public static void SetConfigPath(string FileName)
+        public static void SetConfig(string FileName)
         {
             Path_SqlDataAdapterConfig = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Locati‌​on) + @"\" + FileName;
         }
