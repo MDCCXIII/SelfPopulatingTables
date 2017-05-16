@@ -50,7 +50,7 @@
     <Compile Include="Communications\Transformer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Configurations\SqlDataAdapter.config">
+    <None Include="Configurations\SqlDataAdapter_Template.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </None>
