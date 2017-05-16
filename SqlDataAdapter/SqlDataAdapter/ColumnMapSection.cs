@@ -2,18 +2,27 @@
 
 namespace SqlDataAdapter
 {
-    class ColumnMapSection : ConfigurationSection
+    
+    public class ColumnMapSection : ConfigurationSection
     {
-        [ConfigurationProperty("columnMap")]
+        [ConfigurationProperty("columnMappings", IsDefaultCollection = true)]
         public NodeElement ColumnMap
         {
-            get { return (NodeElement)this["columnMap"]; }
+            get
+            {
+                return this["columnMappings"] as NodeElement;
+            }
         }
     }
 
-    [ConfigurationCollection(typeof(BaseElement), AddItemName = "add")]
+    [ConfigurationCollection(typeof(NodeElement), AddItemName = "add", CollectionType = ConfigurationElementCollectionType.AddRemoveClearMapAlternate)]
     public class NodeElement : ConfigurationElementCollection
     {
+        public new BaseElement this[string key]
+        {
+            get { return BaseGet(key) as BaseElement; }
+        }
+
         protected override ConfigurationElement CreateNewElement()
         {
             return new BaseElement();
@@ -23,38 +32,38 @@ namespace SqlDataAdapter
         {
             return ((BaseElement)element).ColumnName;
         }
-
-        public BaseElement this[int index]
+        protected object GetElementValue(ConfigurationElement element)
         {
-            get { return this.BaseGet(index) as BaseElement; }
+            return ((BaseElement)element).ParameterName;
         }
     }
 
+
     public class BaseElement : ConfigurationElement
     {
-        [ConfigurationProperty("ColumnName", DefaultValue = "", IsKey = true, IsRequired = true)]
+        [ConfigurationProperty("columnName", IsKey=true, IsRequired=true)]
         public string ColumnName
         {
             get
             {
-                return (string)this["ColumnName"];
+                return (string)this["columnName"];
             }
             set
             {
-                this["ColumnName"] = value;
+                this["columnName"] = value;
             }
         }
 
-        [ConfigurationProperty("ParameterName", DefaultValue = "", IsRequired = true)]
+        [ConfigurationProperty("parameterName", IsRequired=true)]
         public string ParameterName
         {
             get
             {
-                return (string)this["ParameterName"];
+                return (string)this["parameterName"];
             }
             set
             {
-                this["ParameterName"] = value;
+                this["parameterName"] = value;
             }
         }
     }

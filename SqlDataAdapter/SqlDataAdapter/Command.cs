@@ -120,10 +120,8 @@ namespace SqlDataAdapter
         /// </summary>
         public void BuildConnection()
         {
-            Configuration configuration = Local.AccessAdapterConfig(Local.Path_SqlDataAdapterConfig);
-            AppSettingsSection appSettings = ((AppSettingsSection)configuration.GetSection("appSettings"));
-            string defaultConnectionName = appSettings.Settings[DefaultConnectionStringKey].Value;
-            string connectionString = configuration.ConnectionStrings.ConnectionStrings[defaultConnectionName].ConnectionString;
+            string defaultConnectionName = Adapter.AppSettings().Settings[DefaultConnectionStringKey].Value;
+            string connectionString = Adapter.ConnectionStrings()[defaultConnectionName].ConnectionString;
             command.Connection = new SqlConnection(connectionString);
         }
 

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Reflection;
 
 namespace SqlDataAdapter
@@ -23,51 +25,7 @@ namespace SqlDataAdapter
         public static Command ToCommand<T>(string storedProceedureName, T clazz) where T : ColumnMap
         {
             Command cmd = new Command(storedProceedureName);
-            foreach (FieldInfo f in typeof(T).GetFields())
-            {
-                ColumnMap attr = (ColumnMap)f.GetCustomAttribute(typeof(T));
-
-                if (attr.parameter != null && attr.parameter != null)
-                {
-                    Command command = new Command(Procedure_GetProcedureParameterInformation);
-                    command.AddParameter(Parameter_ProcedureName, cmd.command.CommandText);
-                    List<object> storedProcedureParameters = DAO.ExecuteQuery(command).ToList();
-                    if (storedProcedureParameters.Contains(attr.parameter))
-                    {
-                        cmd.AddParameter(attr.parameter, f.GetValue(clazz));
-                    }
-                }
-            }
-            return cmd;
-        }
-
-        /// <summary>
-        /// Transforms a table map class into a Command object with its parameters defined from the configuration Parameter Name
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="storedProceedureName"></param>
-        /// <param name="clazz"></param>
-        /// <returns></returns>
-        public static Command ToCommandFromConfiguration<T>(string storedProceedureName, T clazz) where T : ColumnMap
-        {
-            Command cmd = new Command(storedProceedureName);
-            foreach (FieldInfo f in typeof(T).GetFields())
-            {
-                ColumnMap attr = (ColumnMap)f.GetCustomAttribute(typeof(T));
-
-                if (attr.parameter != null && attr.parameter != null)
-                {
-                    Command command = new Command(Procedure_GetProcedureParameterInformation);
-                    command.AddParameter(Parameter_ProcedureName, cmd.command.CommandText);
-                    List<object> storedProcedureParameters = DAO.ExecuteQuery(command).ToList();
-                    Configuration configuration = Local.AccessAdapterConfig(Local.Path_SqlDataAdapterConfig);
-                    IDictionary columnMap = (IDictionary)configuration.GetSection("columnMap");
-                    if (storedProcedureParameters.Contains(columnMap[attr.Name]))
-                    {
-                        cmd.AddParameter(attr.parameter, f.GetValue(clazz));
-                    }
-                }
-            }
+            cmd = ToCommand(cmd, clazz);
             return cmd;
         }
 
@@ -80,50 +38,30 @@ namespace SqlDataAdapter
         /// <returns></returns>
         public static Command ToCommand<T>(this Command cmd, T clazz) where T : ColumnMap
         {
+            Command command = new Command(Procedure_GetProcedureParameterInformation);
+            command.AddParameter(Parameter_ProcedureName, cmd.command.CommandText);
+            List<string> storedProcedureParameters = DAO.ExecuteQuery(command).ToStringList();
+
             foreach (FieldInfo f in typeof(T).GetFields())
             {
-                ColumnMap attr = (ColumnMap)f.GetCustomAttribute(typeof(T));
-
+                var fieldInfo = typeof(T).GetField(f.Name);
+                ColumnMap attr = (ColumnMap)Attribute.GetCustomAttribute(f, typeof(ColumnMap));
+                
                 if (attr.Name != null && attr.parameter != null)
-                {
-                    Command command = new Command(Procedure_GetProcedureParameterInformation);
-                    command.AddParameter(Parameter_ProcedureName, cmd.command.CommandText);
-                    List<object> storedProcedureParameters = DAO.ExecuteQuery(command).ToList();
-                    if (storedProcedureParameters.Contains(attr.parameter))
                     {
-                        cmd.AddParameter(attr.parameter, f.GetValue(clazz));
+                        if (storedProcedureParameters.Contains(attr.parameter))
+                        {
+                            cmd.AddParameter(attr.parameter, f.GetValue(clazz));
+                        }
                     }
-                }
-            }
-            return cmd;
-        }
-
-        /// <summary>
-        /// Transforms a table map class into a Command object with its parameters defined from the configuration Parameter Name
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="cmd"></param>
-        /// <param name="clazz"></param>
-        /// <returns></returns>
-        public static Command ToCommandFromConfiguration<T>(this Command cmd, T clazz) where T : ColumnMap
-        {
-            foreach (FieldInfo f in typeof(T).GetFields())
-            {
-                ColumnMap attr = (ColumnMap)f.GetCustomAttribute(typeof(T));
-
-                if (attr.Name != null)
-                {
-                    Command command = new Command(Procedure_GetProcedureParameterInformation);
-                    command.AddParameter(Parameter_ProcedureName, cmd.command.CommandText);
-                    List<object> storedProcedureParameters = DAO.ExecuteQuery(command).ToList();
-                    Configuration configuration = Local.AccessAdapterConfig(Local.Path_SqlDataAdapterConfig);
-                    IDictionary columnMap = (IDictionary)configuration.GetSection("columnMap");
-                    AppSettingsSection appSettings = ((AppSettingsSection)configuration.GetSection("appSettings"));
-                    if (storedProcedureParameters.Contains(columnMap[attr.Name]))
+                    else if (attr.Name != null)
                     {
-                        cmd.AddParameter(appSettings.Settings[attr.Name].Value, f.GetValue(clazz));
+                        string columnParameterName = Adapter.ColumnMappings().ColumnMap[attr.Name].ParameterName;
+                        if (storedProcedureParameters.Contains(columnParameterName))
+                        {
+                            cmd.AddParameter(columnParameterName, f.GetValue(clazz));
+                        }
                     }
-                }
             }
             return cmd;
         }
@@ -290,9 +228,28 @@ namespace SqlDataAdapter
             {
                 for (int i = 0; i < rdr.FieldCount; i++)
                 {
-                    result.Add(rdr.GetValue(i).ToString());
+                    result.Add(rdr.GetValue(i));
                 }
                 break;
+            }
+            rdr.Dispose();
+            return result;
+        }
+
+        /// <summary>
+        /// Transforms a SqlDataReader into a list whos indices are equal to each column of each row of all values in the reader.
+        /// </summary>
+        /// <param name="rdr"></param>
+        /// <returns></returns>
+        public static List<string> ToStringList(this SqlDataReader rdr)
+        {
+            List<string> result = new List<string>();
+            while (rdr.Read())
+            {
+                for (int i = 0; i < rdr.FieldCount; i++)
+                {
+                    result.Add(rdr[i].ToString());
+                }
             }
             rdr.Dispose();
             return result;
