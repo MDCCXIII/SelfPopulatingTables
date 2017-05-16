@@ -1,12 +1,9 @@
-﻿using System;
+﻿using SqlDataAdapter.Configurations;
+using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Configuration;
 using System.Data.SqlClient;
-using System.IO;
-using System.Reflection;
 
-namespace SqlDataAdapter
+namespace SqlDataAdapter.Communications
 {
     public class Command
     {
@@ -120,8 +117,8 @@ namespace SqlDataAdapter
         /// </summary>
         public void BuildConnection()
         {
-            string defaultConnectionName = Adapter.AppSettings().Settings[DefaultConnectionStringKey].Value;
-            string connectionString = Adapter.ConnectionStrings()[defaultConnectionName].ConnectionString;
+            string defaultConnectionName = SQLAdapterConfiguration.AppSettings().Settings[DefaultConnectionStringKey].Value;
+            string connectionString = SQLAdapterConfiguration.ConnectionStrings()[defaultConnectionName].ConnectionString;
             command.Connection = new SqlConnection(connectionString);
         }
 

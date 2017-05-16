@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
+﻿using System.Configuration;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace SqlDataAdapter
+namespace SqlDataAdapter.Configurations
 {
-    public class Adapter
+    public class SQLAdapterConfiguration
     {
         private static string Path_SqlDataAdapterConfig = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Locati‌​on) + @"\SqlDataAdapter.config";
         private static Configuration AccessAdapterConfig(string path)
@@ -32,9 +27,7 @@ namespace SqlDataAdapter
 
         public static ColumnMapSection ColumnMappings()
         {
-            //Configuration configuration = AccessAdapterConfig(Path_SqlDataAdapterConfig);
-            //return (ColumnMapSection)configuration.GetSectionGroup("configuration").Sections.Get("columnMappings");
-            return (ColumnMapSection)GetSection("DBMappings");// ?? new ColumnMapSection();
+            return (ColumnMapSection)GetSection("DBMappings");
         }
 
         public static ConnectionStringSettingsCollection ConnectionStrings()

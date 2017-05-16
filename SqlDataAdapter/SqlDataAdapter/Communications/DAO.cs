@@ -1,6 +1,6 @@
 ﻿using System.Data.SqlClient;
 
-namespace SqlDataAdapter
+namespace SqlDataAdapter.Communications
 {
     public static class DAO
     {

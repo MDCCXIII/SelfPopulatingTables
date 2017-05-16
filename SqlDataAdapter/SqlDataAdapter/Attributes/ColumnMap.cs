@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace SqlDataAdapter
+namespace SqlDataAdapter.Attributes
 {
     [AttributeUsage(AttributeTargets.Field)]
     public class ColumnMap : Attribute

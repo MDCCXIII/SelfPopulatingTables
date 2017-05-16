@@ -1,8 +1,7 @@
 ﻿using System.Configuration;
 
-namespace SqlDataAdapter
+namespace SqlDataAdapter.Configurations
 {
-    
     public class ColumnMapSection : ConfigurationSection
     {
         [ConfigurationProperty("columnMappings", IsDefaultCollection = true)]
@@ -10,7 +9,7 @@ namespace SqlDataAdapter
         {
             get
             {
-                return this["columnMappings"] as NodeElement;
+                return (NodeElement)this["columnMappings"];
             }
         }
     }
@@ -37,8 +36,7 @@ namespace SqlDataAdapter
             return ((BaseElement)element).ParameterName;
         }
     }
-
-
+    
     public class BaseElement : ConfigurationElement
     {
         [ConfigurationProperty("columnName", IsKey=true, IsRequired=true)]

@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections;
+﻿using SqlDataAdapter.Attributes;
+using SqlDataAdapter.Configurations;
+using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Configuration;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Reflection;
 
-namespace SqlDataAdapter
+namespace SqlDataAdapter.Communications
 {
-
     public static class Transformer
     {
         private const string Procedure_GetProcedureParameterInformation = "GetProcedureParameterInformation";
@@ -56,7 +53,7 @@ namespace SqlDataAdapter
                     }
                     else if (attr.Name != null)
                     {
-                        string columnParameterName = Adapter.ColumnMappings().ColumnMap[attr.Name].ParameterName;
+                        string columnParameterName = SQLAdapterConfiguration.ColumnMappings().ColumnMap[attr.Name].ParameterName;
                         if (storedProcedureParameters.Contains(columnParameterName))
                         {
                             cmd.AddParameter(columnParameterName, f.GetValue(clazz));
