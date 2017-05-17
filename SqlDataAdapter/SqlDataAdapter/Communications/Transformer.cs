@@ -87,32 +87,13 @@ namespace SqlDataAdapter.Communications
         /// <param name="rdr"></param>
         /// <param name="clazz"></param>
         /// <returns></returns>
-        public static List<T> ToTableMapList<T>(this SqlDataReader rdr, T clazz) where T : ColumnMap
+        public static List<T> ToColumnMapList<T>(this SqlDataReader rdr, T clazz) where T : ColumnMap
         {
             List<T> result = new List<T>();
-            List<string> columns = new List<string>();
-            for (int i = 0; i < rdr.FieldCount; i++)
-            {
-                if (clazz.HasColumn<T>(clazz, rdr.GetName(i)))
-                {
-                    columns.Add(rdr.GetName(i));
-                }
-            }
+            List<string> columns = GetMatchingColumns(rdr, clazz);
             while (rdr.Read())
             {
-                clazz = (T)Activator.CreateInstance(typeof(T));
-                foreach (string column in columns)
-                {
-                    if (rdr.GetFieldType(rdr.GetOrdinal(column)).Name.Equals("Int32") && rdr[column].ToString().Equals(""))
-                    {
-                        clazz.SetValue<T>(clazz, column, 0);
-                    }
-                    else
-                    {
-                        clazz.SetValue<T>(clazz, column, rdr[column]);
-                    }
-                }
-                result.Add(clazz);
+                result.Add(SetMatchingColumns<T>(rdr, columns));
             }
             rdr.Dispose();
             return result;
@@ -125,9 +106,32 @@ namespace SqlDataAdapter.Communications
         /// <param name="rdr"></param>
         /// <param name="clazz"></param>
         /// <returns></returns>
-        public static T ToTableMap<T>(this SqlDataReader rdr, T clazz) where T : ColumnMap
+        public static T ToColumnMap<T>(this SqlDataReader rdr, T clazz) where T : ColumnMap
         {
             T result = (T)Activator.CreateInstance(typeof(T), new object[] { });
+            List<string> columns = GetMatchingColumns(rdr, clazz);
+            while (rdr.Read())
+            {
+                result = SetMatchingColumns<T>(rdr, columns);
+                break;
+            }
+            rdr.Dispose();
+            return result;
+        }
+
+        private static T SetMatchingColumns<T>(SqlDataReader rdr, List<string> columns) where T : ColumnMap
+        {
+            T clazz = (T)Activator.CreateInstance(typeof(T));
+            foreach (string column in columns)
+            {
+                clazz.SetValue<T>(clazz, column, rdr[column]);
+            }
+
+            return clazz;
+        }
+
+        private static List<string> GetMatchingColumns<T>(SqlDataReader rdr, T clazz) where T : ColumnMap
+        {
             List<string> columns = new List<string>();
             for (int i = 0; i < rdr.FieldCount; i++)
             {
@@ -136,25 +140,8 @@ namespace SqlDataAdapter.Communications
                     columns.Add(rdr.GetName(i));
                 }
             }
-            while (rdr.Read())
-            {
-                clazz = (T)Activator.CreateInstance(typeof(T));
-                foreach (string column in columns)
-                {
-                    if (rdr.GetFieldType(rdr.GetOrdinal(column)).Name.Equals("Int32") && rdr[column].ToString().Equals(""))
-                    {
-                        clazz.SetValue<T>(clazz, column, 0);
-                    }
-                    else
-                    {
-                        clazz.SetValue<T>(clazz, column, rdr[column]);
-                    }
-                }
-                result = clazz;
-                break;
-            }
-            rdr.Dispose();
-            return result;
+
+            return columns;
         }
 
         /// <summary>
