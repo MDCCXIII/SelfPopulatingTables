@@ -78,7 +78,7 @@ namespace SqlDataAdapter.Communications
         }
 
         /// <summary>
-        /// Returns each record of a query as an entry in a list of equivalent table map classes
+        /// Returns each record of a query as an entry in a list of equivalent column map classes
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="rdr"></param>
@@ -97,7 +97,7 @@ namespace SqlDataAdapter.Communications
         }
 
         /// <summary>
-        /// Returns the first record of a query as its equivalent table map class
+        /// Returns the first record of a query as its equivalent column map class
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="rdr"></param>
