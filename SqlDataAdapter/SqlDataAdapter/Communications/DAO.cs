@@ -5,7 +5,8 @@ namespace SqlDataAdapter.Communications
     public static class DAO
     {
         /// <summary>
-        /// Executes a proceedure and populates the class that called this method.
+        /// Sends the System.Data.SqlClient.SqlCommand.CommandText to the System.Data.SqlClient.SqlCommand.Connection
+        /// and builds a System.Data.SqlClient.SqlDataReader.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="clazz"></param>
@@ -24,6 +25,12 @@ namespace SqlDataAdapter.Communications
             return result;
         }
 
+        /// <summary>
+        /// Executes the query, and returns the first column of the first row in the result 
+        /// set returned by the query. Additional columns or rows are ignored.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
         public static object ExecuteScalar(Command command)
         {
             object result = null;
@@ -38,7 +45,8 @@ namespace SqlDataAdapter.Communications
         }
 
         /// <summary>
-        /// Executes Insert, Update or Delete Queries and returns the number of rows affected;
+        /// Executes a Transact-SQL statement against the connection and returns the number 
+        /// of rows affected.
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
