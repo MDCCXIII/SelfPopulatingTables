@@ -25,32 +25,13 @@ namespace SqlDataAdapter.Configurations
             return (AppSettingsSection)GetSection("appSettings");
         }
 
-        public static AppSettingsSection AppSettings(string FileName)
-        {
-            SetConfig(FileName);
-            return (AppSettingsSection)GetSection("appSettings");
-        }
-
         public static ColumnMapSection ColumnMappings()
         {
             return (ColumnMapSection)GetSection("DBMappings");
         }
 
-        public static ColumnMapSection ColumnMappings(string FileName)
-        {
-            SetConfig(FileName);
-            return (ColumnMapSection)GetSection("DBMappings");
-        }
-
         public static ConnectionStringSettingsCollection ConnectionStrings()
         {
-            Configuration configuration = AccessAdapterConfig(Path_SqlDataAdapterConfig);
-            return configuration.ConnectionStrings.ConnectionStrings;
-        }
-
-        public static ConnectionStringSettingsCollection ConnectionStrings(string FileName)
-        {
-            SetConfig(FileName);
             Configuration configuration = AccessAdapterConfig(Path_SqlDataAdapterConfig);
             return configuration.ConnectionStrings.ConnectionStrings;
         }

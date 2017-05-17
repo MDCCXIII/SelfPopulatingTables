@@ -156,19 +156,6 @@ namespace SqlDataAdapter.Communications
         }
 
         /// <summary>
-        /// Returns true if the rdr has rows
-        /// </summary>
-        /// <param name="rdr"></param>
-        /// <returns></returns>
-        public static bool HasRows(this SqlDataReader rdr)
-        {
-            bool result = false;
-            result = rdr.HasRows();
-            Dispose(rdr);
-            return result;
-        }
-
-        /// <summary>
         /// Returns each record of a query as an entry in a list of equivalent Dictionary's
         /// </summary>
         /// <param name="rdr"></param>
