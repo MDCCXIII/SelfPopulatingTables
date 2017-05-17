@@ -43,22 +43,19 @@ namespace SqlDataAdapter.Communications
             {
                 var fieldInfo = typeof(T).GetField(f.Name);
                 ColumnMap attr = (ColumnMap)Attribute.GetCustomAttribute(f, typeof(ColumnMap));
-                
-                if (attr.Name != null && attr.parameter != null)
+
+                if (attr.parameter != null && storedProcedureParameters.Contains(attr.parameter))
+                {
+                    cmd.AddParameter(attr.parameter, f.GetValue(clazz));
+                }
+                else if (attr.Name != null)
+                {
+                    string columnParameterName = SQLAdapterConfiguration.ColumnMappings().ColumnMap[attr.Name].ParameterName;
+                    if (storedProcedureParameters.Contains(columnParameterName))
                     {
-                        if (storedProcedureParameters.Contains(attr.parameter))
-                        {
-                            cmd.AddParameter(attr.parameter, f.GetValue(clazz));
-                        }
+                        cmd.AddParameter(columnParameterName, f.GetValue(clazz));
                     }
-                    else if (attr.Name != null)
-                    {
-                        string columnParameterName = SQLAdapterConfiguration.ColumnMappings().ColumnMap[attr.Name].ParameterName;
-                        if (storedProcedureParameters.Contains(columnParameterName))
-                        {
-                            cmd.AddParameter(columnParameterName, f.GetValue(clazz));
-                        }
-                    }
+                }
             }
             return cmd;
         }
