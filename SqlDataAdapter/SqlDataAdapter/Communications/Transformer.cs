@@ -116,6 +116,13 @@ namespace SqlDataAdapter.Communications
             return result;
         }
 
+        /// <summary>
+        /// Sets field values for columns found in both the rdr and T
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="rdr"></param>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         private static T SetMatchingColumns<T>(SqlDataReader rdr, List<string> columns) where T : ColumnMap
         {
             T clazz = (T)Activator.CreateInstance(typeof(T));
@@ -127,6 +134,13 @@ namespace SqlDataAdapter.Communications
             return clazz;
         }
 
+        /// <summary>
+        /// Builds a list of all columns found in both the rdr and the clazz
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="rdr"></param>
+        /// <param name="clazz"></param>
+        /// <returns></returns>
         private static List<string> GetMatchingColumns<T>(SqlDataReader rdr, T clazz) where T : ColumnMap
         {
             List<string> columns = new List<string>();
