@@ -75,6 +75,12 @@ namespace SqlDataAdapter.Attributes
                             case TypeCode.Boolean:
                                 val = false;
                                 break;
+                            case TypeCode.Decimal:
+                                val = 0.0M;
+                                break;
+                            case TypeCode.Double:
+                                val = 0.0d;
+                                break;
                             default:
                                 val = 0;
                                 break;
