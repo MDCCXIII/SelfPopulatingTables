@@ -48,7 +48,7 @@ namespace SqlDataAdapter.Communications
                 {
                     cmd.AddParameter(attr.parameter, f.GetValue(clazz));
                 }
-                else if (attr.Name != null)
+                else if (attr.Name != null && SQLAdapterConfiguration.ColumnMappings().ColumnMap[attr.Name] != null)
                 {
                     string columnParameterName = SQLAdapterConfiguration.ColumnMappings().ColumnMap[attr.Name].ParameterName;
                     if (storedProcedureParameters.Contains(columnParameterName))

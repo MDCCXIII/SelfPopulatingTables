@@ -1,5 +1,9 @@
-﻿using System;
+﻿using SqlDataAdapter.Communications;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
+using SqlDataAdapter.Attributes;
+using SqlDataAdapter.Configurations;
 
 namespace SqlDataAdapter.Attributes
 {
@@ -87,6 +91,48 @@ namespace SqlDataAdapter.Attributes
             FieldInfo fieldInfo = typeof(T).GetField(fieldName);
             string columnName = ((ColumnMap)GetCustomAttribute(fieldInfo, typeof(ColumnMap))).Name;
             return columnName.Equals(ColumnName);
+        }
+    }
+    public static class ColumnMapExtensions
+    {
+        public static List<T> PopulateAll<T>(this T clazz, string storedProcedureName, string adapterConfigurationFileName = "SqlDataAdapter.config") where T : ColumnMap
+        {
+            SQLAdapterConfiguration.SetConfig(adapterConfigurationFileName);
+            Command cmd = new Command(storedProcedureName);
+            List<T> result = DAO.ExecuteQuery(cmd.ToCommand(clazz)).ToColumnMapList(clazz);
+            cmd.Dispose();
+            return result;
+        }
+
+        public static T Populate<T>(this T clazz, string storedProcedureName, string adapterConfigurationFileName = "SqlDataAdapter.config") where T : ColumnMap
+        {
+            SQLAdapterConfiguration.SetConfig(adapterConfigurationFileName);
+            Command cmd = new Command(storedProcedureName);
+            T result = DAO.ExecuteQuery(cmd.ToCommand(clazz)).ToColumnMap(clazz);
+            cmd.Dispose();
+            return result;
+        }
+
+        public static int Insert<T>(this T clazz, string storedProcedureName, string adapterConfigurationFileName = "SqlDataAdapter.config") where T : ColumnMap
+        {
+            return NonQueryFromClass(clazz, storedProcedureName, adapterConfigurationFileName);
+        }
+
+        public static int Update<T>(this T clazz, string storedProcedureName, string adapterConfigurationFileName = "SqlDataAdapter.config") where T : ColumnMap
+        {
+            return NonQueryFromClass(clazz, storedProcedureName, adapterConfigurationFileName);
+        }
+
+        public static int Delete<T>(this T clazz, string storedProcedureName, string adapterConfigurationFileName = "SqlDataAdapter.config") where T : ColumnMap
+        {
+            return NonQueryFromClass(clazz, storedProcedureName, adapterConfigurationFileName);
+        }
+
+        private static int NonQueryFromClass<T>(T clazz, string storedProcedureName, string adapterConfigurationFileName) where T : ColumnMap
+        {
+            SQLAdapterConfiguration.SetConfig(adapterConfigurationFileName);
+            Command cmd = new Command(storedProcedureName);
+            return DAO.ExecuteNonQuery(cmd.ToCommand(clazz));
         }
     }
 }

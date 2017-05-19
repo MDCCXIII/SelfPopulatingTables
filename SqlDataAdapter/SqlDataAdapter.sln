@@ -5,6 +5,11 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlDataAdapter", "SqlDataAdapter\SqlDataAdapter.csproj", "{31C51E2A-8F69-47F0-AE7E-D47C9ED1B5CA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "..\..\..\..\Documents\Visual Studio 2015\Projects\UnitTests\UnitTests\UnitTests.csproj", "{AF2DCC4E-E6B3-42A4-8A42-56A38397D7FE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{31C51E2A-8F69-47F0-AE7E-D47C9ED1B5CA} = {31C51E2A-8F69-47F0-AE7E-D47C9ED1B5CA}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +20,10 @@ Global
 		{31C51E2A-8F69-47F0-AE7E-D47C9ED1B5CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31C51E2A-8F69-47F0-AE7E-D47C9ED1B5CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31C51E2A-8F69-47F0-AE7E-D47C9ED1B5CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF2DCC4E-E6B3-42A4-8A42-56A38397D7FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF2DCC4E-E6B3-42A4-8A42-56A38397D7FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF2DCC4E-E6B3-42A4-8A42-56A38397D7FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF2DCC4E-E6B3-42A4-8A42-56A38397D7FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

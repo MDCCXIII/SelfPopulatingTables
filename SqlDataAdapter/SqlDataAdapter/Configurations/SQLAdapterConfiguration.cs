@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace SqlDataAdapter.Configurations
 {
-    public class SQLAdapterConfiguration
+    public static class SQLAdapterConfiguration
     {
         private static string Path_SqlDataAdapterConfig = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Locati‌​on) + @"\SqlDataAdapter.config";
         private static Configuration AccessAdapterConfig(string path)
