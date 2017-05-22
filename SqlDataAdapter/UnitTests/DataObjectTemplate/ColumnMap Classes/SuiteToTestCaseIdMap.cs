@@ -1,0 +1,24 @@
+﻿using SqlDataAdapter.Attributes;
+
+namespace UnitTests.DataObjectTemplate.ColumnMap_Classes
+{
+    internal class SuiteToTestCaseIdMap : ColumnMap
+    {
+        [ColumnMap("SuiteToTestCaseSuiteId")]
+        public int SuiteId;
+
+        [ColumnMap("SuiteToTestCaseTestCaseId")]
+        public int Id;
+
+        public SuiteToTestCaseIdMap()
+        {
+
+        }
+
+        public SuiteToTestCaseIdMap(int SuiteId = 0, int Id = 0)
+        {
+            this.SuiteId = SuiteId;
+            this.Id = Id;
+        }
+    }
+}

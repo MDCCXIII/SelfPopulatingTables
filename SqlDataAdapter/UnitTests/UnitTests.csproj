@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{943E14D2-D903-40AA-AC7D-0C6E722C849B}</ProjectGuid>
+    <ProjectGuid>{AF2DCC4E-E6B3-42A4-8A42-56A38397D7FE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UnitTests</RootNamespace>
@@ -34,7 +34,12 @@
       <HintPath>..\packages\NUnit.3.6.1\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System" />
+    <Reference Include="System">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.configuration">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -44,11 +49,41 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataAdapterTests.cs" />
+    <Compile Include="Class1.cs" />
+    <Compile Include="DataObjectTemplate\ColumnMap Classes\ProjectMap.cs" />
+    <Compile Include="DataObjectTemplate\ColumnMap Classes\StepMap.cs" />
+    <Compile Include="DataObjectTemplate\ColumnMap Classes\StepsMap.cs" />
+    <Compile Include="DataObjectTemplate\ColumnMap Classes\SuiteMap.cs" />
+    <Compile Include="DataObjectTemplate\ColumnMap Classes\SuiteToTestCaseIdMap.cs" />
+    <Compile Include="DataObjectTemplate\ColumnMap Classes\TestCaseMap.cs" />
+    <Compile Include="DataObjectTemplate\Data Objects\StoredProcedures.cs" />
+    <Compile Include="DataObjectTemplate\Data Objects\TestRunner.cs" />
+    <Compile Include="DataObjectTemplate\Data Objects\UserSettings\UserSettings.cs" />
+    <Compile Include="Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="MyAdapter.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="SqlDataAdapter.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Source\Repos\SelfPopulatingTables\SqlDataAdapter\SqlDataAdapter\SqlDataAdapter.csproj">
+      <Project>{31C51E2A-8F69-47F0-AE7E-D47C9ED1B5CA}</Project>
+      <Name>SqlDataAdapter</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DataObjectTemplate\Data Objects\ExecutionInformation\" />
+    <Folder Include="DataObjectTemplate\Data Objects\RuntimeVariables\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
