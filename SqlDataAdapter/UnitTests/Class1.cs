@@ -14,17 +14,17 @@ namespace UnitTests
         {
             Project testInsertSuite = new Project(Url: "https://aarp-test.kanacloud.com/GTConnect/UnifiedAcceptor/AARPDesktop.Main",
                 ProjectName: "Kana");
-            testInsertSuite.Insert("insertProject", "SqlDataAdapter.Config");
+            testInsertSuite.Push("insertProject", "SqlDataAdapter.Config");
 
             List<Project> suites = new Project(ProjectName: "Kana").PopulateAll("getProjectByName", "MyAdapter.Config");
 
             Project testDeleteProject = new Project(ProjectName: "Updated Project Name").Populate("getProjectByName");
-            testDeleteProject.Delete("deleteProjectById", "SqlDataAdapter.Config");
+            testDeleteProject.Push("deleteProjectById", "SqlDataAdapter.Config");
 
             Project testUpdateProject = new Project(ProjectName: "Kana").Populate("getProjectByName");
             testUpdateProject.ProjectName = "Updated Project Name";
             testUpdateProject.Url = "Updated URL";
-            testUpdateProject.Update("updateProjectByID");
+            testUpdateProject.Push("updateProjectByID");
 
             TestRunner testRunner = new TestRunner();
             testRunner.ProjectInformation = new ProjectMap();

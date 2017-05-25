@@ -2,12 +2,12 @@
 
 namespace SqlDataAdapter.Configurations
 {
-   
+    /// <summary>
+    /// Describes a custom configuration section
+    /// </summary>
     public class ColumnMapSection : ConfigurationSection
     {
-        /// <summary>
-        /// 
-        /// </summary>
+       
         [ConfigurationProperty("columnMappings", IsDefaultCollection = true)]
         public NodeElement ColumnMap
         {
@@ -18,55 +18,38 @@ namespace SqlDataAdapter.Configurations
         }
     }
 
-
+    /// <summary>
+    /// Describes a custom configuration element collection
+    /// </summary>
     [ConfigurationCollection(typeof(NodeElement), AddItemName = "add", CollectionType = ConfigurationElementCollectionType.AddRemoveClearMapAlternate)]
     public class NodeElement : ConfigurationElementCollection
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
         public new BaseElement this[string key]
         {
             get { return BaseGet(key) as BaseElement; }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         protected override ConfigurationElement CreateNewElement()
         {
             return new BaseElement();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="element"></param>
-        /// <returns></returns>
         protected override object GetElementKey(ConfigurationElement element)
         {
             return ((BaseElement)element).ColumnName;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="element"></param>
-        /// <returns></returns>
         protected object GetElementValue(ConfigurationElement element)
         {
             return ((BaseElement)element).ParameterName;
         }
     }
-    
+
+    /// <summary>
+    /// Describes the elements of a custom configuration element collection 
+    /// </summary>
     public class BaseElement : ConfigurationElement
     {
-        /// <summary>
-        /// 
-        /// </summary>
         [ConfigurationProperty("columnName", IsKey=true, IsRequired=true)]
         public string ColumnName
         {
@@ -80,9 +63,6 @@ namespace SqlDataAdapter.Configurations
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         [ConfigurationProperty("parameterName", IsRequired=true)]
         public string ParameterName
         {

@@ -83,12 +83,15 @@ namespace SqlDataAdapter.Attributes
         public bool HasColumn<T>(T c, string ColumnName) where T : ColumnMap
         {
             bool result = false;
-            foreach (FieldInfo f in typeof(T).GetFields())
+            if (ColumnName != null)
             {
-                if (columnMatch(c, ColumnName, f.Name))
+                foreach (FieldInfo f in typeof(T).GetFields())
                 {
-                    result = true;
-                    break;
+                    if (columnMatch(c, ColumnName, f.Name))
+                    {
+                        result = true;
+                        break;
+                    }
                 }
             }
             return result;
@@ -145,25 +148,33 @@ namespace SqlDataAdapter.Attributes
         /// <param name="fieldName"></param>
         public bool columnMatch<T>(T c, string ColumnName, string fieldName)
         {
+            bool result = false;
             FieldInfo fieldInfo = typeof(T).GetField(fieldName);
-            string columnName = ((ColumnMap)GetCustomAttribute(fieldInfo, typeof(ColumnMap))).Name;
-            return columnName.Equals(ColumnName);
+            ColumnMap attribute = ((ColumnMap)GetCustomAttribute(fieldInfo, typeof(ColumnMap)));
+            if(attribute != null)
+            {
+                result = attribute.Name.Equals(ColumnName);
+            }
+            return result;
         }
     }
 
     public static class ColumnMapExtensions
     {
         /// <summary>
-        /// Populates a list of all of the column mapping parameter names found in the Sql Data Adapter config file  
+        ///  Populates a list of class T using the results of the executed stored procedure
+        /// <para>
+        /// Optional: Sets the custom configuration name <seealso cref="SQLAdapterConfiguration.SetConfig(string, string)"/>
+        /// </para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="clazz"></param>
         /// <param name="storedProcedureName"></param>
         /// <param name="adapterConfigurationFileName"></param>
         /// <returns></returns>
-        public static List<T> PopulateAll<T>(this T clazz, string storedProcedureName, string adapterConfigurationFileName = "SqlDataAdapter.config") where T : ColumnMap
+        public static List<T> PopulateAll<T>(this T clazz, string storedProcedureName, string adapterConfigurationFileName = "SqlDataAdapter.config", string adapterConfigurationFilePath = "") where T : ColumnMap
         {
-            SQLAdapterConfiguration.SetConfig(adapterConfigurationFileName);
+            SQLAdapterConfiguration.SetConfig(adapterConfigurationFileName, adapterConfigurationFilePath);
             Command cmd = new Command(storedProcedureName);
             List<T> result = DAO.ExecuteQuery(cmd.ToCommand(clazz)).ToColumnMapList(clazz);
             cmd.Dispose();
@@ -171,16 +182,19 @@ namespace SqlDataAdapter.Attributes
         }
 
         /// <summary>
-        /// Populates a single instance of a column mapping parameter name found in the Sql Data Adapter config file 
+        /// Populates a single instance of class T using the first record of the results of the executed stored procedure 
+        /// <para>
+        /// Optional: Sets the custom configuration name <seealso cref="SQLAdapterConfiguration.SetConfig(string, string)"/>
+        /// </para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="clazz"></param>
         /// <param name="storedProcedureName"></param>
         /// <param name="adapterConfigurationFileName"></param>
         /// <returns></returns>
-        public static T Populate<T>(this T clazz, string storedProcedureName, string adapterConfigurationFileName = "SqlDataAdapter.config") where T : ColumnMap
+        public static T Populate<T>(this T clazz, string storedProcedureName, string adapterConfigurationFileName = "SqlDataAdapter.config", string adapterConfigurationFilePath = "") where T : ColumnMap
         {
-            SQLAdapterConfiguration.SetConfig(adapterConfigurationFileName);
+            SQLAdapterConfiguration.SetConfig(adapterConfigurationFileName, adapterConfigurationFilePath);
             Command cmd = new Command(storedProcedureName);
             T result = DAO.ExecuteQuery(cmd.ToCommand(clazz)).ToColumnMap(clazz);
             cmd.Dispose();
@@ -188,55 +202,19 @@ namespace SqlDataAdapter.Attributes
         }
 
         /// <summary>
-        /// Inserts a list of 
+        /// Executes a nonquery stored procedure and returns the number of rows affected in the database
+        /// <para>
+        /// Optional: Sets the custom configuration name <seealso cref="SQLAdapterConfiguration.SetConfig(string, string)"/>
+        /// </para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="clazz"></param>
         /// <param name="storedProcedureName"></param>
         /// <param name="adapterConfigurationFileName"></param>
         /// <returns></returns>
-        public static int Insert<T>(this T clazz, string storedProcedureName, string adapterConfigurationFileName = "SqlDataAdapter.config") where T : ColumnMap
+        public static int Push<T>(this T clazz, string storedProcedureName, string adapterConfigurationFileName = "SqlDataAdapter.config", string adapterConfigurationFilePath = "") where T : ColumnMap
         {
-            return NonQueryFromClass(clazz, storedProcedureName, adapterConfigurationFileName);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="clazz"></param>
-        /// <param name="storedProcedureName"></param>
-        /// <param name="adapterConfigurationFileName"></param>
-        /// <returns></returns>
-        public static int Update<T>(this T clazz, string storedProcedureName, string adapterConfigurationFileName = "SqlDataAdapter.config") where T : ColumnMap
-        {
-            return NonQueryFromClass(clazz, storedProcedureName, adapterConfigurationFileName);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="clazz"></param>
-        /// <param name="storedProcedureName"></param>
-        /// <param name="adapterConfigurationFileName"></param>
-        /// <returns></returns>
-        public static int Delete<T>(this T clazz, string storedProcedureName, string adapterConfigurationFileName = "SqlDataAdapter.config") where T : ColumnMap
-        {
-            return NonQueryFromClass(clazz, storedProcedureName, adapterConfigurationFileName);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="clazz"></param>
-        /// <param name="storedProcedureName"></param>
-        /// <param name="adapterConfigurationFileName"></param>
-        /// <returns></returns>
-        private static int NonQueryFromClass<T>(T clazz, string storedProcedureName, string adapterConfigurationFileName) where T : ColumnMap
-        {
-            SQLAdapterConfiguration.SetConfig(adapterConfigurationFileName);
+            SQLAdapterConfiguration.SetConfig(adapterConfigurationFileName, adapterConfigurationFilePath);
             Command cmd = new Command(storedProcedureName);
             return DAO.ExecuteNonQuery(cmd.ToCommand(clazz));
         }
