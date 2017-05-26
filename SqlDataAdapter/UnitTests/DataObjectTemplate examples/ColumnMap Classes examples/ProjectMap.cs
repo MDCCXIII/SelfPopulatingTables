@@ -9,13 +9,13 @@ namespace UnitTests.DataObjectTemplate.ColumnMap_Classes
 {
     public class ProjectMap : ColumnMap
     {
-        [ColumnMap("ProjectID")]
+        [ColumnMap(columnName: "ProjectID")]
         public int ProjectId;
 
-        [ColumnMap("ProjectName")]
+        [ColumnMap(columnName: "ProjectName")]
         public string ProjectName;
 
-        [ColumnMap("ProjectUrl", "projectUrl")]
+        [ColumnMap(columnName: "ProjectUrl", parameterMap: "projectUrl")]
         public string ProjectUrl;
 
         public ProjectMap()

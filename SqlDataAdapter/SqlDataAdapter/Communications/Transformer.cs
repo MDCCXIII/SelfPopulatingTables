@@ -39,41 +39,54 @@ namespace SqlDataAdapter.Communications
             command.AddParameter(Parameter_ProcedureName, cmd.command.CommandText);
             List<string> storedProcedureParameters = DAO.ExecuteQuery(command).ToStringList();
 
-            foreach (FieldInfo f in typeof(T).GetFields())
-            {
-                var fieldInfo = typeof(T).GetField(f.Name);
-                ColumnMap attr = (ColumnMap)Attribute.GetCustomAttribute(f, typeof(ColumnMap));
-
-                if (attr.parameter != null && storedProcedureParameters.Contains(attr.parameter))
-                {
-                    cmd.AddParameter(attr.parameter, f.GetValue(clazz));
-                }
-                else if (attr.Name != null && SQLAdapterConfiguration.ColumnMappings().ColumnMap[attr.Name] != null)
-                {
-                    string columnParameterName = SQLAdapterConfiguration.ColumnMappings().ColumnMap[attr.Name].ParameterName;
-                    if (storedProcedureParameters.Contains(columnParameterName))
-                    {
-                        cmd.AddParameter(columnParameterName, f.GetValue(clazz));
-                    }
-                }
-            }
+            SetParameterFromField(cmd, clazz, storedProcedureParameters);
+            SetParameterFromProperty(cmd, clazz, storedProcedureParameters);
             return cmd;
         }
 
-        /// <summary>
-        /// Disposes of a SqlDataReader object
-        /// </summary>
-        /// <param name="rdr"></param>
-        private static void Dispose(this SqlDataReader rdr)
+        private static void SetParameterFromProperty<T>(Command cmd, T clazz, List<string> storedProcedureParameters) where T : ColumnMap
         {
-            try
+            foreach (PropertyInfo p in typeof(T).GetProperties())
             {
-                rdr.Close();
-                rdr = null;
+                ColumnMap attr = (ColumnMap)Attribute.GetCustomAttribute(p, typeof(ColumnMap));
+                if (attr != null)
+                {
+                    if (attr.parameter != null && storedProcedureParameters.Contains(attr.parameter))
+                    {
+                        cmd.AddParameter(attr.parameter, p.GetValue(clazz));
+                    }
+                    else if (attr.Name != null && SQLAdapterConfiguration.ColumnMappings().ColumnMap[attr.Name] != null)
+                    {
+                        string columnParameterName = SQLAdapterConfiguration.ColumnMappings().ColumnMap[attr.Name].ParameterName;
+                        if (storedProcedureParameters.Contains(columnParameterName))
+                        {
+                            cmd.AddParameter(columnParameterName, p.GetValue(clazz));
+                        }
+                    }
+                }
             }
-            catch
-            {
+        }
 
+        private static void SetParameterFromField<T>(Command cmd, T clazz, List<string> storedProcedureParameters) where T : ColumnMap
+        {
+            foreach (FieldInfo f in typeof(T).GetFields())
+            {
+                ColumnMap attr = (ColumnMap)Attribute.GetCustomAttribute(f, typeof(ColumnMap));
+                if (attr != null)
+                {
+                    if (attr.parameter != null && storedProcedureParameters.Contains(attr.parameter))
+                    {
+                        cmd.AddParameter(attr.parameter, f.GetValue(clazz));
+                    }
+                    else if (attr.Name != null && SQLAdapterConfiguration.ColumnMappings().ColumnMap[attr.Name] != null)
+                    {
+                        string columnParameterName = SQLAdapterConfiguration.ColumnMappings().ColumnMap[attr.Name].ParameterName;
+                        if (storedProcedureParameters.Contains(columnParameterName))
+                        {
+                            cmd.AddParameter(columnParameterName, f.GetValue(clazz));
+                        }
+                    }
+                }
             }
         }
 

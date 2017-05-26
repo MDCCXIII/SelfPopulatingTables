@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnitTests.DataObjectTemplate.Data_Object;
 
 namespace UnitTests.DataObjectTemplate.ColumnMap_Classes
 {
@@ -40,6 +41,7 @@ namespace UnitTests.DataObjectTemplate.ColumnMap_Classes
         public int ScreenId;
 
         public int ElementAccessibleTypeId;
+        
         
 
 

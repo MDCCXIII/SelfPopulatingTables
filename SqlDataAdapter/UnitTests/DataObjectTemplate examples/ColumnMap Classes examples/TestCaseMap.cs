@@ -9,19 +9,19 @@ namespace UnitTests.DataObjectTemplate.ColumnMap_Classes
 {
     class TestCaseMap : ColumnMap
     {
-        [ColumnMap("TestCaseId")]
+        [ColumnMap(columnName: "TestCaseId")]
         public int Id;
-        [ColumnMap("TestCaseTestCaseName")]
+        [ColumnMap(columnName: "TestCaseTestCaseName")]
         public new string Name;
-        [ColumnMap("TestCaseTestCaseDescription")]
+        [ColumnMap(columnName: "TestCaseTestCaseDescription")]
         public string Description;
-        [ColumnMap("TestCaseTestTypeId")]
+        [ColumnMap(columnName: "TestCaseTestTypeId")]
         public new int TypeId;
-        [ColumnMap("TestTypeTestType")]
+        [ColumnMap(columnName: "TestTypeTestType")]
         public string Type;
-        [ColumnMap("TestTypeTestTypeDescription")]
+        [ColumnMap(columnName: "TestTypeTestTypeDescription")]
         public string TypeDescription;
-        [ColumnMap("TestCaseEnabled")]
+        [ColumnMap(columnName: "TestCaseEnabled")]
         public bool Enabled;
 
         public TestCaseMap()

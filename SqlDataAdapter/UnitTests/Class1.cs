@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using SqlDataAdapter.Attributes;
+using System;
 using System.Collections.Generic;
 using UnitTests.DataObjectTemplate.ColumnMap_Classes;
 using UnitTests.DataObjectTemplate.Data_Object;
@@ -9,6 +10,14 @@ namespace UnitTests
     [TestFixture]
     public class Class1
     {
+
+        //[Test]
+        //public void testSuite()
+        //{
+        //    SuiteMap suiteInfo = new SuiteMap(Name: "TestSuite").Populate("getSuiteBySuiteName");
+        //    Console.WriteLine("Hello");
+        //}
+
         [Test]
         public void testing()
         {
@@ -29,8 +38,6 @@ namespace UnitTests
             TestRunner testRunner = new TestRunner();
             testRunner.ProjectInformation = new ProjectMap();
             testRunner = new TestRunner();
-
-
         }
     }
 }

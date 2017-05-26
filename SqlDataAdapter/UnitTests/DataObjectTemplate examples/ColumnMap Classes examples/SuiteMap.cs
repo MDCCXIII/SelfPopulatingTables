@@ -6,37 +6,38 @@ namespace UnitTests.DataObjectTemplate.ColumnMap_Classes
 {
     public class SuiteMap : ColumnMap
     {
-        [ColumnMap("SuiteId")]
-        private int SuiteId;
+        private int f_SuiteId;
+        [ColumnMap(columnName: "SuiteId")]
+        public int SuiteId {
+            get
+            {
+                return f_SuiteId;
+            }
+            internal set
+            {
+                f_SuiteId = value;
+                TestCaseIds = new SuiteToTestCaseIdMap(f_SuiteId).PopulateAll(StoredProcedures.GetTestCaseIdsBySuiteId);
+            }
+        }
 
-        [ColumnMap("SuiteSuiteName")]
+        [ColumnMap(columnName: "SuiteSuiteName")]
         public new string Name;
 
-        [ColumnMap("SuiteSuiteDescription")]
+        [ColumnMap(columnName: "SuiteSuiteDescription")]
         public string Description;
 
-        [ColumnMap("SuiteProjectId")]
+        [ColumnMap(columnName: "SuiteProjectId")]
         public int ProjectId;
         List<SuiteToTestCaseIdMap> TestCaseIds { get; set; }
-
-        public void Id(int Id) 
-        {
-            SuiteId = Id;
-            TestCaseIds = new SuiteToTestCaseIdMap(Id).PopulateAll(StoredProcedures.GetTestCaseIdsBySuiteId);
-        }
-        public int Id()
-        {
-            return SuiteId;
-        }
 
         public SuiteMap()
         {
 
         }
 
-        public SuiteMap(int Id = 0, string Name = null, string Description = null, int ProjectId = 0)
+        public SuiteMap(int SuiteId = 0, string Name = null, string Description = null, int ProjectId = 0)
         {
-            this.Id(Id);
+            this.SuiteId = SuiteId;
             this.Name = Name;
             this.Description = Description;
             this.ProjectId = ProjectId;

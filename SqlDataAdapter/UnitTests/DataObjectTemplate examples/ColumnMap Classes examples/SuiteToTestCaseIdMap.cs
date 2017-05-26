@@ -4,10 +4,10 @@ namespace UnitTests.DataObjectTemplate.ColumnMap_Classes
 {
     internal class SuiteToTestCaseIdMap : ColumnMap
     {
-        [ColumnMap("SuiteToTestCaseSuiteId")]
+        [ColumnMap(columnName: "SuiteToTestCaseSuiteId")]
         public int SuiteId;
 
-        [ColumnMap("SuiteToTestCaseTestCaseId")]
+        [ColumnMap(columnName: "SuiteToTestCaseTestCaseId")]
         public int Id;
 
         public SuiteToTestCaseIdMap()
